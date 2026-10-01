@@ -2,12 +2,12 @@
 
 Concept for omakar.com. Daily Devotion. Lifelong Transformation.
 
-The page opens with a scroll intro: the camera walks through a carved temple arch to a still pool of milk, and the Omakar logo rises out of it, milk draining off the gold and dripping back into the pool. The site follows with the launch countdown, about, features, inside the app, walkthrough, founder note, FAQ and footer.
+The page opens on the hero card with the launch countdown, followed by about, features, inside the app, walkthrough, founder note, FAQ and footer.
 
 ## Files
 
 * **index.html**: the whole page, with its CSS and JavaScript inline
-* **assets/**: arch, logo, photos and app mockups
+* **assets/**: logo, photos and app mockups (arch.webp is kept for a future intro)
 
 ## Fonts
 
