@@ -2,7 +2,7 @@
 
 Concept for omakar.com. Daily Devotion. Lifelong Transformation.
 
-The page opens with a scroll intro: the camera walks through a carved temple arch, rises over the clouds, and the Omakar logo appears. The site follows with the launch countdown, about, features, inside the app, walkthrough, founder note, FAQ and footer.
+The page opens with a scroll intro: the camera walks through a carved temple arch to a still pool of milk, and the Omakar logo rises out of it, milk draining off the gold and dripping back into the pool. The site follows with the launch countdown, about, features, inside the app, walkthrough, founder note, FAQ and footer.
 
 ## Files
 
@@ -20,4 +20,3 @@ The page opens with a scroll intro: the camera walks through a carved temple arc
 2. Add the real links for the waitlist, WhatsApp community, App Store, Google Play, Instagram, privacy policy and terms.
 3. Confirm the FAQ answers tagged on the page.
 4. Replace the hero photo, lotus and store card with original files.
-5. Add the painted clouds image as `assets/clouds.webp`; the page uses it automatically.

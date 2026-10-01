@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jaini&family=Manrope:wght@300;400;500;700&display=swap">
 <style>
-/* Layout: a sticky intro walks through the carved arch and over golden clouds to the Omakar mark, then an airy editorial site of labelled sections, rounded photo cards and floating stat cards. */
+/* Layout: a sticky intro walks through the carved arch and to a still pool of milk, from which the Omakar mark rises, then an airy editorial site of labelled sections, rounded photo cards and floating stat cards. */
 :root{
   color-scheme:light;
   --light:#F7F7F5; --haze:#EEEEEB; --bg:#FAFAF9; --bg2:#F1F1EF; --card:#FFFFFF; --goldcard:#E9E9E6;
@@ -80,21 +80,9 @@ html.js .rv:not(.seen){opacity:.25;transform:translateY(22px)}
 
 /* ---------- intro stage ---------- */
 .intro{position:relative;height:600vh}
-.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,var(--light) 45%,var(--haze) 100%)}
-.layer{position:absolute;inset:0;pointer-events:none}
-.rays{position:absolute;left:50%;top:42%;width:180vmax;height:180vmax;translate:-50% -50%;
-  background:repeating-conic-gradient(from 0deg,rgba(150,150,145,0) 0 7deg,rgba(150,150,145,.16) 9deg,rgba(150,150,145,0) 11deg 18deg);
-  -webkit-mask:radial-gradient(circle,#000 0 12%,transparent 55%);mask:radial-gradient(circle,#000 0 12%,transparent 55%);
-  animation:spin 90s linear infinite;opacity:var(--rays,.35)}
-.glow{background:radial-gradient(42% 36% at 50% 42%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%)}
-@keyframes spin{to{rotate:360deg}}
-#motes{position:absolute;inset:0;width:100%;height:100%}
-.clouds{position:absolute;left:-4%;right:-4%;bottom:0;height:52%;transform:translateY(var(--cy,90%)) scale(var(--cs,1.15));transform-origin:50% 100%;will-change:transform}
-.clouds canvas,.clouds img{position:absolute;inset:0;width:100%;height:100%}
-.clouds img{object-fit:cover;object-position:50% 100%}
-.logo{position:absolute;left:50%;top:40%;translate:-50% -50%;display:grid;justify-items:center;gap:clamp(12px,2.2vh,24px);width:min(92vw,640px);text-align:center}
-.emblem{width:clamp(150px,24vh,250px);opacity:var(--eo,0);transform:translateY(var(--ey,24px)) scale(var(--es,.82));filter:blur(var(--eb,10px)) drop-shadow(0 10px 30px rgba(120,120,115,.35));will-change:transform,opacity,filter}
-.word{width:clamp(200px,36vh,340px);clip-path:inset(0 0 var(--wc,100%) 0);transform:translateY(var(--wy,18px));will-change:clip-path,transform}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#F7F7F5 100%)}
+#pool{position:absolute;inset:0;width:100%;height:100%;opacity:var(--po,0)}
+.pooltext{position:absolute;left:50%;top:82%;translate:-50% -50%;display:grid;justify-items:center;gap:10px;width:min(92vw,640px);text-align:center}
 .sub{color:var(--ink2);opacity:var(--so,0)}
 .tagline{opacity:var(--to,0);font-family:var(--display);font-size:clamp(26px,3.4vw,40px);line-height:1.15;color:var(--ink)}
 .tagline span{opacity:.15;transition:opacity .25s}
@@ -260,7 +248,7 @@ footer .ig svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width
   .float b{font-size:17px}
 }
 @media (prefers-reduced-motion:reduce){
-  .rays,.cue i,.dot{animation:none}
+  .cue i,.dot{animation:none}
   .welcome *{animation:none!important}
   html.js .rv:not(.seen){opacity:1;transform:none}
 }
@@ -280,21 +268,13 @@ footer .ig svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width
 <div class="progress" id="progress" aria-hidden="true"></div>
 
 <main id="top">
-  <!-- INTRO: through the arch, over the clouds, to the logo -->
+  <!-- INTRO: through the arch, the logo rises out of a pool of milk -->
   <section class="intro" id="intro" aria-label="Welcome to Omakar">
     <div class="stage" id="stage">
-      <div class="layer glow"></div>
-      <div class="rays" aria-hidden="true"></div>
-      <canvas id="motes" aria-hidden="true"></canvas>
-      <div class="logo" aria-hidden="true">
-        <img class="emblem" src="assets/emblem.png" alt="">
-        <img class="word" src="assets/wordmark.png" alt="">
+      <canvas id="pool" aria-hidden="true"></canvas>
+      <div class="pooltext" aria-hidden="true">
         <p class="sub cap">Launching soon</p>
         <p class="tagline" id="tagline">Daily Devotion. Lifelong Transformation.</p>
-      </div>
-      <div class="clouds" aria-hidden="true">
-        <canvas id="cloudPaint"></canvas>
-        <img id="cloudImg" src="assets/clouds.webp" alt="" hidden>
       </div>
       <div class="welcome">
         <span class="cap">Welcome to</span>
@@ -471,36 +451,140 @@ footer .ig svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width
   const split=el=>{el.innerHTML=el.textContent.trim().split(/\s+/).map(w=>"<span>"+w+"</span>").join(" ");return [...el.children]};
   const words=split(document.getElementById("tagline"));
 
-  /* clouds: the painted image when present, else painted in code */
-  const ci=document.getElementById("cloudImg"), cc=document.getElementById("cloudPaint");
-  ci.addEventListener("load",()=>{ci.hidden=false;cc.hidden=true});
-  if(ci.complete&&ci.naturalWidth){ci.hidden=false;cc.hidden=true}
-  function paintClouds(){
-    if(cc.hidden)return;
-    const r=cc.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1);
-    cc.width=r.width*d; cc.height=r.height*d; const x=cc.getContext("2d"); x.scale(d,d);
-    const W=r.width,H=r.height; let s=11; const rnd=()=>(s=(s*16807)%2147483647)/2147483647;
-    const ridge=t=>{const a=Math.exp(-Math.pow((t-0.04)/0.22,2))*0.95, b=Math.exp(-Math.pow((t-0.88)/0.12,2))*0.62, c=Math.exp(-Math.pow((t-0.45)/0.25,2))*0.42;return Math.max(.16,a,b,c)};
-    const puffs=[];
-    for(let i=0;i<1100;i++){const t=rnd(), top=H*(1-ridge(t)), y=top+Math.pow(rnd(),.7)*(H-top)*1.05, rr=(10+rnd()*30)*(W/1400+0.55);puffs.push([t*W,y+rr*.4,rr,top])}
-    puffs.sort((a,b)=>a[1]-b[1]);
-    x.filter="blur(0.6px)";
-    for(const [px,py,rr,top] of puffs){
-      const lift=1-Math.min(1,(py-top)/(H*.5));
-      const g=x.createRadialGradient(px-rr*.45,py-rr*.55,rr*.05,px+rr*.1,py+rr*.2,rr*1.15);
-      g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.5,"rgba(238,239,240,1)");g.addColorStop(1,"rgba(190,193,198,1)");
-      x.fillStyle=g;x.beginPath();x.arc(px,py,rr,0,Math.PI*2);x.fill();
-      if(lift>.55){x.strokeStyle="rgba(120,124,130,.35)";x.lineWidth=.8;x.beginPath();x.arc(px,py,rr,Math.PI*1.1,Math.PI*1.75);x.stroke()}
-    }
-    x.filter="none";
-  }
+  /* ---------- the milk pool: the logo rises out of liquid ----------
+     poolE (0 to 1) is set by the scroll. Everything else (milk draining off the
+     gold, drops falling back, ripples) runs on its own clock. */
+  const pc=document.getElementById("pool"), px=pc.getContext("2d");
+  let PW=0,PH=0,DPR=1,inView=true,poolE=0,surf=0,Lh=0,Lw=0,logoC=null,filmC=null,wetC=null,dripPts=[],rowAt=[];
+  const drops=[], ripples=[];
+  const emb=new Image(), wrd=new Image(); let loaded=0;
+  emb.src="assets/emblem.png"; wrd.src="assets/wordmark.png";
+  [emb,wrd].forEach(im=>im.decode?im.decode().then(()=>{loaded++;buildLogo()}).catch(()=>{}):(im.onload=()=>{loaded++;buildLogo()}));
 
-  /* drifting gold motes */
-  const mc=document.getElementById("motes"), mx=mc.getContext("2d"); let motes=[], MW=0, MH=0, inView=true;
-  function sizeMotes(){const d=Math.min(2,devicePixelRatio||1);MW=stage.clientWidth;MH=stage.clientHeight;mc.width=MW*d;mc.height=MH*d;mx.setTransform(d,0,0,d,0,0);
-    motes=Array.from({length:Math.round(MW/18)},()=>({x:Math.random()*MW,y:Math.random()*MH,r:.6+Math.random()*1.8,v:.15+Math.random()*.45,a:.2+Math.random()*.6}))}
-  function drawMotes(){if(inView){mx.clearRect(0,0,MW,MH);for(const m of motes){m.y-=m.v;m.x+=Math.sin((m.y+m.r*90)/60)*.2;if(m.y<-4){m.y=MH+4;m.x=Math.random()*MW}
-    mx.globalAlpha=m.a;mx.fillStyle="#A9A9A4";mx.beginPath();mx.arc(m.x,m.y,m.r,0,6.283);mx.fill()}mx.globalAlpha=1}if(!reduce)requestAnimationFrame(drawMotes)}
+  function buildLogo(){
+    if(loaded<2||!PW)return;
+    const gap=30, cw=Math.max(emb.naturalWidth,wrd.naturalWidth), ch=emb.naturalHeight+gap+wrd.naturalHeight;
+    Lh=Math.round(Math.min(PH*.46,PW*.8*ch/cw)); const k=Lh/ch; Lw=Math.round(cw*k);
+    logoC=document.createElement("canvas"); logoC.width=Lw*DPR; logoC.height=Lh*DPR;
+    const g=logoC.getContext("2d"); g.scale(DPR,DPR);
+    g.drawImage(emb,(Lw-emb.naturalWidth*k)/2,0,emb.naturalWidth*k,emb.naturalHeight*k);
+    g.drawImage(wrd,(Lw-wrd.naturalWidth*k)/2,(emb.naturalHeight+gap)*k,wrd.naturalWidth*k,wrd.naturalHeight*k);
+    // a milk white copy of the logo, used as the film that drains off the gold
+    filmC=document.createElement("canvas"); filmC.width=logoC.width; filmC.height=logoC.height;
+    const f=filmC.getContext("2d"); f.drawImage(logoC,0,0); f.globalCompositeOperation="source-in"; f.fillStyle="#FFFFFF"; f.fillRect(0,0,filmC.width,filmC.height);
+    // streaks: vary the film by column so it drains in runs, not as an even fade
+    const sc=document.createElement("canvas"); sc.width=filmC.width; sc.height=1; const sg=sc.getContext("2d");
+    let v=.85; for(let x=0;x<sc.width;x++){v+=(Math.random()-.5)*.07; v=Math.min(1,Math.max(.55,v)); sg.fillStyle=`rgba(0,0,0,${v})`; sg.fillRect(x,0,1,1)}
+    f.globalCompositeOperation="destination-in"; f.drawImage(sc,0,0,filmC.width,filmC.height);
+    wetC=document.createElement("canvas"); wetC.width=filmC.width; wetC.height=filmC.height;
+    rowAt=new Array(Lh).fill(Infinity);
+    // drip points: solid pixels with empty space below them (the bottoms of every shape)
+    dripPts=[];
+    try{
+      const d=g.getImageData(0,0,logoC.width,logoC.height).data, W=logoC.width, H=logoC.height;
+      for(let y=2;y<H-3;y+=2)for(let x=0;x<W;x+=3){const a=d[(y*W+x)*4+3], b=d[((y+3)*W+x)*4+3];if(a>160&&b<20)dripPts.push([x/DPR,y/DPR])}
+    }catch(e){ // canvas read blocked (opened from disk): use known bottoms of the mark
+      for(let i=0;i<40;i++)dripPts.push([Lw*(.12+.76*Math.random()),Lh*(.985)]);
+      [[.5,.47],[.42,.44],[.58,.45],[.5,.76],[.3,.7],[.7,.7]].forEach(([x,y])=>dripPts.push([Lw*x,Lh*y]));
+    }
+  }
+  function sizePool(){
+    DPR=Math.min(2,devicePixelRatio||1); PW=stage.clientWidth; PH=stage.clientHeight;
+    pc.width=PW*DPR; pc.height=PH*DPR; px.setTransform(DPR,0,0,DPR,0,0); surf=Math.round(PH*.64); buildLogo();
+  }
+  const logoTop=()=>surf+8-poolE*(Lh+58);
+  const milkTop="#ECECE9", milkDeep="#E3E3E0";
+
+  function surfaceY(x,bulge){ // the surface line, lifted where the logo pulls the milk up
+    let y=surf; if(bulge)y-=bulge.a*Math.exp(-Math.pow((x-bulge.x)/bulge.w,2)); return y;
+  }
+  let lastT=performance.now(), wasCrossing=false;
+  function drawPool(t){
+    const dt=Math.min(.05,(t-lastT)/1000); lastT=t;
+    if(inView&&logoC){
+      px.clearRect(0,0,PW,PH);
+      const top=logoTop(), bot=top+Lh, lx=(PW-Lw)/2, cx=PW/2;
+      // rows of the logo that are above the surface get a fresh milk film the moment they emerge
+      const out=clamp(Math.floor(surf-top),0,Lh);
+      for(let r=0;r<Lh;r++){if(r<out){if(rowAt[r]===Infinity)rowAt[r]=t}else rowAt[r]=Infinity}
+      // the milk clings to the logo while it is crossing the surface, then lets go
+      const gapAbove=surf-bot, crossing=top<surf&&gapAbove<34;
+      let bulge=null;
+      if(crossing&&!reduce){const pull=gapAbove<0?1:1-gapAbove/34;bulge={x:cx,w:Lw*.32,a:18*pull}}
+      if(wasCrossing&&!crossing&&gapAbove>=34&&!reduce){ // it just broke free
+        ripples.push({x:cx,r:Lw*.18,a:.9,s:120});ripples.push({x:cx,r:Lw*.08,a:.7,s:80});
+        for(let i=0;i<10;i++)drops.push({x:cx+(Math.random()-.5)*Lw*.5,y:surf-4,vx:(Math.random()-.5)*60,vy:-60-Math.random()*120,r:1.5+Math.random()*2.5,st:"fall"});
+      }
+      wasCrossing=crossing;
+
+      // reflection of the emerged logo, softly broken by the milk
+      const reflH=Math.min(out,PH-surf);
+      for(let i=0;i<reflH;i+=2){
+        const sy=Math.max(0,surf-top-1-i); if(sy<0||sy>=Lh)continue;
+        const wob=reduce?0:Math.sin(i*.09+t*.0025)*(1+i*.02);
+        px.globalAlpha=.11*(1-i/Math.min(140,Math.max(60,reflH)));
+        px.drawImage(logoC,0,sy*DPR,Lw*DPR,2*DPR,lx+wob,surf+i,Lw,2);
+      }
+      px.globalAlpha=1;
+
+      // the milk body
+      const grd=px.createLinearGradient(0,surf,0,PH); grd.addColorStop(0,"rgba(236,236,233,.94)"); grd.addColorStop(.35,"rgba(226,226,222,.97)"); grd.addColorStop(1,"rgba(214,214,210,1)");
+      px.fillStyle=grd; px.beginPath(); px.moveTo(0,PH);
+      for(let x=0;x<=PW;x+=6)px.lineTo(x,surfaceY(x,bulge)); px.lineTo(PW,PH); px.closePath(); px.fill();
+      // the neck of milk between the surface and the logo as it pulls away
+      if(bulge&&gapAbove>0){
+        const nw=Lw*.16*(1-gapAbove/34);
+        px.fillStyle=milkTop; px.beginPath();
+        px.moveTo(cx-nw-Lw*.12,surf); px.quadraticCurveTo(cx-nw*.6,surf-6,cx-nw*.5,bot+1);
+        px.lineTo(cx+nw*.5,bot+1); px.quadraticCurveTo(cx+nw*.6,surf-6,cx+nw+Lw*.12,surf); px.closePath(); px.fill();
+      }
+      // the logo: emerged part sharp, the part just under the surface faintly visible through the milk
+      px.save(); px.beginPath(); px.rect(0,0,PW,surf); px.clip();
+      px.drawImage(logoC,lx,top,Lw,Lh);
+      // milk film, thick where the logo just came out, draining away over about a second and a half
+      if(!reduce&&out>0){
+        const fg=wetC.getContext("2d"); fg.globalCompositeOperation="copy"; fg.drawImage(filmC,0,0);
+        fg.globalCompositeOperation="destination-in";
+        const gr=fg.createLinearGradient(0,0,0,wetC.height); let any=false;
+        for(let r=0;r<Lh;r+=10){const fa=r<out?Math.pow(clamp(1-(t-rowAt[r])/1500,0,1),1.4)*.95:0;if(fa>.01)any=true;gr.addColorStop(r/Lh,`rgba(0,0,0,${fa})`)}
+        if(any){fg.fillStyle=gr;fg.fillRect(0,0,wetC.width,wetC.height);px.drawImage(wetC,lx,top,Lw,Lh)}
+      }
+      px.restore(); px.globalAlpha=1;
+      if(top<surf+24){px.save();px.beginPath();px.rect(0,surf,PW,24);px.clip();
+        for(let i=0;i<24;i+=2){const sy=surf-top+i;if(sy<0||sy>=Lh)continue;px.globalAlpha=.32*(1-i/24);px.drawImage(logoC,0,sy*DPR,Lw*DPR,2*DPR,lx,surf+i,Lw,2)}
+        px.restore();px.globalAlpha=1}
+      // surface highlight and shadow lines
+      px.lineWidth=1.5; px.strokeStyle="rgba(255,255,255,.95)"; px.beginPath();
+      for(let x=0;x<=PW;x+=6){const y=surfaceY(x,bulge);x?px.lineTo(x,y):px.moveTo(x,y)} px.stroke();
+      px.lineWidth=1; px.strokeStyle="rgba(28,28,26,.07)"; px.beginPath();
+      for(let x=0;x<=PW;x+=6){const y=surfaceY(x,bulge)+3;x?px.lineTo(x,y):px.moveTo(x,y)} px.stroke();
+
+      if(!reduce){
+        // drops gather on the bottoms of each shape while the film is wet, then fall
+        if(dripPts.length&&out>0&&Math.random()<.55){
+          const q=dripPts[(Math.random()*dripPts.length)|0], row=Math.floor(q[1]);
+          if(row<out&&rowAt[row]!==Infinity&&t-rowAt[row]<2200&&drops.length<90)
+            drops.push({lx:q[0],ly:q[1],r:0,rm:2+Math.random()*3,st:"hang"});
+        }
+        for(let i=drops.length-1;i>=0;i--){const d=drops[i];
+          if(d.st==="hang"){d.r+=dt*4.5;d.x=lx+d.lx;d.y=top+d.ly+d.r*.9;if(d.r>=d.rm){d.st="fall";d.vx=0;d.vy=20}}
+          else{d.vy+=900*dt;d.x+=(d.vx||0)*dt;d.y+=d.vy*dt;
+            if(d.y>=surf&&d.vy>0){ripples.push({x:d.x,r:d.r*1.5,a:.7,s:40+d.r*14});drops.splice(i,1);continue}}
+          // a milk drop: white body, soft grey edge, stretched while it falls
+          const st=d.st==="fall"?clamp(1+(d.vy||0)/600,1,1.9):1.15;
+          px.save();px.translate(d.x,d.y);px.scale(1/Math.sqrt(st),st);
+          const g=px.createRadialGradient(-d.r*.3,-d.r*.3,0,0,0,d.r);g.addColorStop(0,"#FFFFFF");g.addColorStop(.7,"#F2F2F0");g.addColorStop(1,"rgba(118,118,114,.95)");
+          px.fillStyle=g;px.beginPath();px.arc(0,0,d.r,0,6.283);px.fill();px.restore();
+        }
+        // ripples spread on the surface, seen at a low angle
+        for(let i=ripples.length-1;i>=0;i--){const r=ripples[i];r.r+=r.s*dt;r.a-=dt*.55;if(r.a<=0){ripples.splice(i,1);continue}
+          px.lineWidth=1.4;px.strokeStyle=`rgba(255,255,255,${r.a})`;px.beginPath();px.ellipse(r.x,surf+2,r.r,r.r*.16,0,0,6.283);px.stroke();
+          px.lineWidth=1;px.strokeStyle=`rgba(28,28,26,${r.a*.12})`;px.beginPath();px.ellipse(r.x,surf+4,r.r,r.r*.16,0,0,6.283);px.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(drawPool);
+  }
 
 
   const prog=(el,startAt=1,endAt=0)=>{const r=el.getBoundingClientRect(),h=innerHeight;return clamp((h*startAt-r.top)/(r.height+h*(startAt-endAt)),0,1)};
@@ -518,17 +602,11 @@ footer .ig svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width
     S.setProperty("--wo",1-seg(p,.06,.2));
     S.setProperty("--ws",reduce?1:1+easeIn(seg(p,.04,.22))*.5);
     S.setProperty("--co",1-seg(p,0,.05));
-    const up=easeOut(seg(p,.22,.5)), down=easeIO(seg(p,.86,1));
-    S.setProperty("--cy",(reduce?18:(90-up*72+down*20))+"%");
-    S.setProperty("--cs",reduce?1:1.15-up*.15);
-    S.setProperty("--rays",.2+seg(p,.4,.6)*.5);
-    const e=easeOut(seg(p,.44,.6));
-    S.setProperty("--eo",e);S.setProperty("--es",reduce?1:.82+e*.18);S.setProperty("--ey",(reduce?0:24-e*24)+"px");S.setProperty("--eb",(10-e*10)+"px");
-    const w=easeOut(seg(p,.56,.68));
-    S.setProperty("--wc",(100-w*100)+"%");S.setProperty("--wy",(reduce?0:18-w*18)+"px");
-    S.setProperty("--so",seg(p,.62,.7));
-    S.setProperty("--to",seg(p,.66,.72));
-    const lit=Math.round(seg(p,.7,.88)*words.length);
+    S.setProperty("--po",reduce?1:seg(p,.26,.4));
+    poolE=reduce?1:easeIO(seg(p,.42,.66));
+    S.setProperty("--so",seg(p,.66,.72));
+    S.setProperty("--to",seg(p,.68,.74));
+    const lit=Math.round(seg(p,.72,.9)*words.length);
     words.forEach((s,i)=>s.classList.toggle("on",i<lit));
     bar.classList.toggle("show",p>.97||r.bottom<innerHeight*.5);
     if(!reduce){const tp=prog(trio);trio.style.setProperty("--ty",(30-tp*60)+"px")}
@@ -536,8 +614,8 @@ footer .ig svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width
   }
   const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(frame)}};
   addEventListener("scroll",onScroll,{passive:true});
-  addEventListener("resize",()=>{sizeMotes();paintClouds();onScroll()});
-  sizeMotes();paintClouds();frame();drawMotes();
+  addEventListener("resize",()=>{sizePool();onScroll()});
+  sizePool();frame();requestAnimationFrame(drawPool);
 
   /* reveal on view, from a visible resting state */
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add("seen");io.unobserve(en.target)}}),{rootMargin:"0px 0px -10% 0px"});
