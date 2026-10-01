@@ -8,12 +8,11 @@ The page opens with a scroll intro: the camera walks through a carved temple arc
 
 * **index.html**: the whole page, with its CSS and JavaScript inline
 * **assets/**: arch, logo, photos and app mockups
-* **fonts/**: kept out of git, see below
 
 ## Fonts
 
 * **Satoshi** loads from Fontshare.
-* **Shivaraja** is a personal use demo font. Buy the commercial license from Pekotype before launch, then place `Shivaraja.woff2` in `fonts/` and remove `fonts/` from `.gitignore`.
+* **Jaini** (by Ek Type, SIL Open Font License) loads from Google Fonts and is used for display text.
 
 ## Before launch
 
